@@ -21,103 +21,6 @@ var Place = function(data) {
      data.loc.substring(data.loc.indexOf ( "," ) + 1 )));
 }
 
-//Binding handler for map init.
-ko.bindingHandlers.montrealMap = {
-    init: function (element) {
-        var highlighter  = new google.maps.Circle({
-            strokeColor: 'black',
-            strokeOpacity: 2,
-            strokeWeight: 2,
-            fillColor: 'yellow',
-            fillOpacity: 0.35,
-            radius: 1000
-          });
-        var  map = new google.maps.Map(element, {
-                name: "Montreal",
-                center: {lat: 45.501689, lng: -73.567256 }, 
-                zoom: 12 });
-         var markerLayer = new google.maps.FusionTablesLayer({
-                query: { select: 'Location',
-                  from: placesTable
-                  },
-                styles: [{
-                 markerOptions: {
-                 iconName:  "red_pushpin",
-                 animation: google.maps.Animation.DROP
-                     }
-                }],
-            map: map,
-           suppressInfoWindows: true// use custom window instance
-                                 // allows for a custom close event listner
-         });
-         //custom popup window object
-         var infoWindow = new google.maps.InfoWindow();
-         
-        //listener for map markers this listener is also
-        // triggered when the display list place matching 
-        // a marker is clicked
-         google.maps.event.addListener(markerLayer,'click', function(e) {
-         
-             // needed for new marker click without close of
-             // previous marker infoWindow.
-              infoWindow.close();
-              highlighter.setMap(null);
-
-             //highlight current selected marker
-              highlighter.setCenter(e.latLng);
-              highlighter.setMap(map);
-
-             //create html for popup window based on selected place/marker
-             //I used google css class for consitent styles user experience
-               var html = [];
-               html.push('<div class="googft-info-window">');
-               html.push("<b>" + e.row['Name'].columnName + ": </b>");
-               html.push(e.row['Name'].value + "<br>");
-               html.push("</div>");
-
-              //open the popup window at marker's map position with html info
-              infoWindow.setOptions({content : html.join(""),position : e.latLng});
-              infoWindow.open(map);
-             //addlister for window close event
-           });
-
-           google.maps.event.addListener(infoWindow,'closeclick',function(){
-             //removes the highligt when popup window closed.
-               highlighter.setMap(null); 
-           });
-
-          //save to vm so listner can be triggered from places list
-          viewModel._markers = markerLayer;
-
-         //save to vm for layer update. when view filter is changed
-           viewModel._highligher = highlighter;
-           viewModel._infoWindow = infoWindow;
-    }
-
-
- };
-
-
-// update map markers for a selected filter 
-// 0 is default of all places
-var updateLayer = function(data) {
-   //remove any open marker highlighters, this can happen if user
-   //toggles filter without closing a marker info window
-    viewModel._highligher.setMap(null);
-    viewModel._infoWindow.close();
-    //0 is default view of all places, need to remove where clause from sql
-    var options = (data == 0 ?
-              { select: 'Location',
-                from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
-              }
-             :
-              { select: 'Location',
-                from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
-                 where: 'Type =' + "'" + data +"'"
-               } );
-    //set map markers based on places filter
-    viewModel._markers.setOptions({query: options});
-}
 
 // populate filter list from google fusion table
 var populateFilterList = function() {
@@ -139,6 +42,115 @@ var populateFilterList = function() {
         }); 
 }
 
+
+
+//Binding handler for map init.
+ko.bindingHandlers.montrealMap = {
+    init: function (element) {
+       //create a highlighter to animate markers on click
+        var highlighter  = new google.maps.Circle({
+            strokeColor: 'black',
+            strokeOpacity: 2,
+            strokeWeight: 2,
+            fillColor: 'yellow',
+            fillOpacity: 0.35,
+            radius: 1000
+          });
+        //create the map
+        var  map = new google.maps.Map(element, {
+                name: "Montreal",
+                center: {lat: 45.503949, lng: -73.587577 },
+                zoom: 12,
+                clickableIcons: false});
+
+        //create map markers from google fusion table
+         var markerLayer = new google.maps.FusionTablesLayer({
+                query: { select: 'Location',
+                  from: placesTable
+                  },
+                styles: [{
+                 markerOptions: {
+                 iconName:  "red_pushpin",
+                 animation: google.maps.Animation.DROP
+                     }
+                }],
+            map: map,
+           suppressInfoWindows: true// use custom window instance
+                                 // allows for a custom close event listner
+         });
+
+         //custom popup window object, sfor marker information
+         var infoWindow = new google.maps.InfoWindow();
+         
+        //listener for map markers this listener is also
+        // triggered when the display list place matching 
+        // a marker is clicked
+         google.maps.event.addListener(markerLayer,'click', function(e) {
+         
+             // needed to clean up in case of new marker click without close of
+             // previous marker infoWindow.
+              infoWindow.close();
+              highlighter.setMap(null);
+
+             //highlight current selected marker
+              highlighter.setCenter(e.latLng);
+              highlighter.setMap(map);
+
+             //create html for popup window based on selected place/marker
+             //I used google css class for consitent styles user experience
+               var html = [];
+               html.push('<div class="googft-info-window">');
+               html.push("<b>" + e.row['Name'].columnName + ": </b>");
+               html.push(e.row['Name'].value + "<br>");
+               html.push("</div>");
+
+              //open the popup window at marker's map position with html info
+              infoWindow.setOptions({content : html.join(""),position : e.latLng});
+              infoWindow.open(map);
+             
+           });
+            //addlister for window close event
+           google.maps.event.addListener(infoWindow,'closeclick',function(){
+             //removes the highligt when popup window closed.
+               highlighter.setMap(null); 
+           });
+
+          //save to vm so listner can be triggered from places list
+          viewModel._markers = markerLayer;
+
+         //save to vm for layer update. when view filter is changed
+           viewModel._highligher = highlighter;
+           viewModel._infoWindow = infoWindow;
+           viewModel._montrealMap = map;
+
+    }
+
+
+ };
+
+
+// update map markers for a selected filter 
+// 0 is default of all places
+var updateLayer = function(data) {
+   //remove any open marker highlighters, this can happen if user
+   //toggles filter without closing a marker info window
+    viewModel._highligher.setMap(null);
+    viewModel._infoWindow.close();
+
+    //0 is default view of all places, need to remove where clause from sql
+    var options = (data == 0 ?
+              { select: 'Location',
+                from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
+              }
+             :
+              { select: 'Location',
+                from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
+                 where: 'Type =' + "'" + data +"'"
+               } );
+    //set map markers based on places filter
+    viewModel._markers.setOptions({query: options});
+}
+
 //update places' list based on filter 
 // 0(default is all places)
 var updatePlacesList = function(data) {
@@ -155,14 +167,18 @@ var updatePlacesList = function(data) {
             url: url,
             dataType: 'json',
             success: function(data) {
+               var bounds = new google.maps.LatLngBounds();
                for (var i in data.rows) {
                   var row = data.rows[i];
-                  placesList.push(
-                  new Place({name: row[0],
-                           number: row[1],
-                            loc: row[2]}) );
+                  var place = new Place({name: row[0],
+                                  number: row[1],
+                                  loc: row[2]});
+                placesList.push(place);
+                bounds.extend(new google.maps.LatLng({lat: place.lat(), lng: place.lng() }));
                 };
-
+                //recenter map and defualt zoom on filter change
+                viewModel._montrealMap.setCenter(bounds.getCenter());
+                viewModel._montrealMap.setZoom(12);
             },
              error: function(data ) {
                 alert( "pin data not available. Try again later" );
@@ -189,7 +205,7 @@ var viewModel = function(){
             updateLayer(newValue);
            }, this);
 
-      //Place list button callback method
+      //Places list button callback method
       self.placeClick = function(place){ 
            var row = [];
            //Create a row to mimic google fusion table cell row object
