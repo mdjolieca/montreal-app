@@ -1,0 +1,33 @@
+
+
+html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+}
+
+
+.container {
+   height: 100%;
+   position: relative;
+}
+
+
+.map{
+   bottom:0px;
+   height: 100%;
+   left: 362px;
+   position: absolute;
+   right: 0px;
+}
+
+.options-box {
+        margin: 0;
+        background: #fff;
+        height: 100%;
+        line-height: 35px;
+        padding: 1%;
+        text-align: left;
+        max-width: 20%;
+      }
+
