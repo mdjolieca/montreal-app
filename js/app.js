@@ -2,7 +2,8 @@ var googleUrl = 'https://www.googleapis.com/fusiontables/v2/query?sql=select+*+f
 var typesTable = '15yq7vGN2XBufTkrg9Z4XxrG0KOdMINW9hT8B28MU';
 var placesTable = '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K';
 var googleKey = '&key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI';
-;
+var placesUrl = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJZcCSF0AayUwRsDVrEHZsydY&key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI&callback=?'
+                 
 //Filter Object 
 var Filter = function(data) {
   this.name = ko.observable(data.name)
@@ -21,7 +22,9 @@ var Place = function(data) {
      data.loc.substring(data.loc.indexOf ( "," ) + 1 )));
 }
 
-
+var WikiLink = function(data){
+  this.url=ko.observable(data.url);
+}
 // populate filter list from google fusion table
 var populateFilterList = function() {
       //get filter list options from table and
@@ -63,7 +66,7 @@ ko.bindingHandlers.montrealMap = {
                 zoom: 12,
                 clickableIcons: false});
 
-        //create map markers from google fusion table
+        //create map markers from google fusion tablea
          var markerLayer = new google.maps.FusionTablesLayer({
                 query: { select: 'Location',
                   from: placesTable
@@ -78,14 +81,31 @@ ko.bindingHandlers.montrealMap = {
            suppressInfoWindows: true// use custom window instance
                                  // allows for a custom close event listner
          });
-
-         //custom popup window object, sfor marker information
+          //custom popup window object, sfor marker information
          var infoWindow = new google.maps.InfoWindow();
-         
+        
         //listener for map markers this listener is also
         // triggered when the display list place matching 
         // a marker is clicked
          google.maps.event.addListener(markerLayer,'click', function(e) {
+
+               var imageUrl = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x150&location=' +
+               e.latLng.lat() + "," + e.latLng.lng() + googleKey + '">'
+
+             //create html for popup window based on selected place/marker
+             //I used google css class for consitent styles user experience
+               var html = [];
+               html.push('<div id="infoWindow"> ');
+               html.push("<b>" + e.row['Name'].columnName + ": </b>");
+               html.push(e.row['Name'].value + "<br>");
+               html.push('<div>');
+               html.push('<ul id="wikiLinks" data-bind="foreach: wikiLinks">');
+               html.push(' <button data-bind="text: url"></button>');
+              // html.push('<li> <a data-bind="attr: {href: $data text: url}"> test</a></li>');
+               html.push('</ul>');
+                html.push('<div>');
+               html.push(imageUrl);
+               html.push("</div>");
          
              // needed to clean up in case of new marker click without close of
              // previous marker infoWindow.
@@ -94,19 +114,38 @@ ko.bindingHandlers.montrealMap = {
 
              //highlight current selected marker
               highlighter.setCenter(e.latLng);
-              highlighter.setMap(map);
-
-             //create html for popup window based on selected place/marker
-             //I used google css class for consitent styles user experience
-               var html = [];
-               html.push('<div class="googft-info-window">');
-               html.push("<b>" + e.row['Name'].columnName + ": </b>");
-               html.push(e.row['Name'].value + "<br>");
-               html.push("</div>");
-
-              //open the popup window at marker's map position with html info
+              highlighter.setMap(map);  e.row['Name'].value
+       var wUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' 
+                  + e.row['Name'].value + '&format=json&callback=?';
+              $.ajax({
+        type: "GET",
+        url: wUrl,
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        dataType: "json",
+        success: function (response) {
+         var articles = response[1];
+         wikiLinks=[];
+        for(var i=0; i< articles.length; i++) {
+           var wLink = new WikiLink({url: 'http://en.wikipedia.org/wiki/' + articles[i]});
+           wikiLinks.push(wLink);
+            } 
               infoWindow.setOptions({content : html.join(""),position : e.latLng});
-              infoWindow.open(map);
+              infoWindow.open(map); 
+              ko.applyBindings(self, document.getElementById('infoWindow'));
+     
+        },
+        error: function (errorMessage) {
+        }
+    });
+
+              
+               
+              
+
+               //open the popup window at marker's map position with html info
+              /* infoWindow.setOptions({content : html.join(""),position : e.latLng});
+              infoWindow.open(map) */; 
              
            });
             //addlister for window close event
@@ -169,10 +208,11 @@ var updatePlacesList = function(data) {
             success: function(data) {
                var bounds = new google.maps.LatLngBounds();
                for (var i in data.rows) {
-                  var row = data.rows[i];
-                  var place = new Place({name: row[0],
-                                  number: row[1],
-                                  loc: row[2]});
+                  var column = data.rows[i];
+                  var place = new Place({name: column[0],
+                                  number: column[1],
+                                  loc: column[2],
+                                  placeId: column[3]});//Todo add Google Places Info
                 placesList.push(place);
                 bounds.extend(new google.maps.LatLng({lat: place.lat(), lng: place.lng() }));
                 };
@@ -187,7 +227,7 @@ var updatePlacesList = function(data) {
         }); 
 
 }
-
+var wikiLinks =  ko.observableArray([]);
 var  placesList = ko.observableArray([]);
 var  filtersList = ko.observableArray([]);
 var viewModel = function(){
@@ -213,12 +253,21 @@ var viewModel = function(){
                 columnName : 'Name',
                 value : place.name()
               };
-            //create an event to mimic google fusion table mouse event
+             row['Lat']= {
+                columnName : 'Lat',
+                value : place.lat()
+              };
+             row['Lng']= {
+                columnName : 'Lng',
+                value : place.lng()
+              };
+             //create an event to mimic google fusion table mouse event
              var  mouseEvent = {
               row : row,
               latLng : new google.maps.LatLng({lat: place.lat(), lng: place.lng() })
             };
-          //trigger map marker listener that cooresponds to this place
+
+        //trigger map marker listener that cooresponds to this place
           google.maps.event.trigger(viewModel._markers, 'click', mouseEvent);
       };
 }

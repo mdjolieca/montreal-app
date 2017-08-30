@@ -17,18 +17,26 @@
                               optionsValue: 'number',
                               optionsCaption: '-- Filters--'"> 
             </select>
-       
+            
+             <!-- links to layer markers will display here -->
            <ul id="placesList" data-bind="foreach: placesList">
            <button data-bind="text: name, click: $parent.placeClick"></button>
           </br>
           </ul>
-        <!-- links to layer markers will display here -->
+      <span> 
+      Places list sourced from -
+      <a href="https://fusiontables.google.com/data?docid=16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K#rows:id=7" target="_blank" title="DataSoure Montreal-Pins">Montreal-Pins</a> 
+      </span>
+      <span> </br>
+      Filter list sourced from -
+      <a href="https://fusiontables.google.com/data?docid=15yq7vGN2XBufTkrg9Z4XxrG0KOdMINW9hT8B28MU#rows:id=1" target="_blank" title="DataSoure Pins-Filter">Pins-Filter</a> 
+      </span>
       </div>
       <div class="map" data-bind="montrealMap" ></div>
      </div>
-    <script 
-     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI&callback=initMap">
-    </script>
+     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI">
+     </script>
+   
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="js/lib/jquery-3.2.1.min.js"></script>
     <script src="js/app.js"></script>
