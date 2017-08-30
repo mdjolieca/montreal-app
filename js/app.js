@@ -101,7 +101,6 @@ ko.bindingHandlers.montrealMap = {
                html.push('<div>');
                html.push('<ul id="wikiLinks" data-bind="foreach: wikiLinks">');
                html.push(' <button data-bind="text: url"></button>');
-              // html.push('<li> <a data-bind="attr: {href: $data text: url}"> test</a></li>');
                html.push('</ul>');
                 html.push('<div>');
                html.push(imageUrl);
@@ -115,7 +114,7 @@ ko.bindingHandlers.montrealMap = {
              //highlight current selected marker
               highlighter.setCenter(e.latLng);
               highlighter.setMap(map);  e.row['Name'].value
-       var wUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' 
+       var wUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' 
                   + e.row['Name'].value + '&format=json&callback=?';
               $.ajax({
         type: "GET",
