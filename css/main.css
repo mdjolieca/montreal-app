@@ -10,6 +10,7 @@ html, body {
 .container {
    height: 100%;
    position: relative;
+   background: whitesmoke;
 }
 
 
@@ -22,8 +23,9 @@ html, body {
 }
 
 .options-box {
+
         margin: 0;
-        background: #fff;
+        background: whitesmoke;
         height: 100%;
         line-height: 35px;
         padding: 1%;
@@ -31,3 +33,15 @@ html, body {
         max-width: 20%;
       }
 
+.placesButton {
+       
+      }
+
+.placesDiv {
+     height: 80%;
+      }
+
+.attDiv {
+      height: 10%;
+      font-size: 12px;  
+      }
