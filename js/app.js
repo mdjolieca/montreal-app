@@ -30,8 +30,7 @@ var WikiLink = function(data){
 //populate marker/place popup window
 var getWikiInfo = function(data) {
   //call wiki links api if data if data bind to pop up info window
-  var wUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' 
-              + data + '&format=json&callback=?';
+  var wUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search='+ data + '&format=json&callback=?';
    $.ajax({
           type: "GET",
           url: wUrl,
