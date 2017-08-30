@@ -6,10 +6,10 @@ var wikiLinks =  ko.observableArray([]);
                 
 //Filter Object for fliters list 
 var Filter = function(data) {
-  this.name = ko.observable(data.name)
+  this.name = ko.observable(data.name);
   this.number = ko.observable(data.number);
 
-}
+};
 //Place object for places list
 var Place = function(data) {
    this.name = ko.observable(data.name);
@@ -20,11 +20,11 @@ var Place = function(data) {
      data.loc.substring(0, data.loc.indexOf("," ))));
    this.lng = ko.observable(parseFloat(
      data.loc.substring(data.loc.indexOf ( "," ) + 1 )));
-}
+};
 // wiki article link object
 var WikiLink = function(data){
   this.url=ko.observable(('http://en.wikipedia.org/wiki/' + data));
-}
+};
 
 
 //populate marker/place popup window
@@ -55,7 +55,7 @@ var getWikiInfo = function(data) {
           }
    });
 
-}
+};
 
 //Binding handler for map init.
 ko.bindingHandlers.montrealMap = {
@@ -98,7 +98,7 @@ ko.bindingHandlers.montrealMap = {
      google.maps.event.addListener(markerLayer,'click', function(e) {
 
          var imageUrl = '<img src="https://maps.googleapis.com/maps/api/streetview?size=300x150&location=' +
-                         e.latLng.lat() + "," + e.latLng.lng() + googleKey + '">'
+                         e.latLng.lat() + "," + e.latLng.lng() + googleKey + '">';
 
           //create html for popup window based on selected place/marker
          var html = [];
@@ -180,7 +180,7 @@ var viewModel = function(){
                            placeId: column[3]});//Todo add Google Places Info
                 self.placesList.push(place);
                 bounds.extend(new google.maps.LatLng({lat: place.lat(), lng: place.lng() }));
-           };
+           }
            //recenter map and defualt zoom on filter change
            viewModel._montrealMap.setCenter(bounds.getCenter());
            viewModel._montrealMap.setZoom(12);
@@ -202,7 +202,7 @@ var viewModel = function(){
            for (var i in data.rows) {
              var row = data.rows[i];
              self.filtersList.push(new Filter({name: row[0], number: row[1]}));
-           };
+           }
          },
          error: function( data ) {
            alert( "pin data not available. Try again later" );
@@ -219,14 +219,14 @@ var viewModel = function(){
 
    //filter list drop down menu subscriber method
    this.selectedFilter.subscribe(function(newValue) {
-       if(newValue == undefined){newValue = 0;}//use default
+       if(newValue === undefined){newValue = 0;}//use default
        self.updatePlacesList(newValue);
        //remove any open marker info windows
        viewModel._infoWindow.close();
        viewModel._highlighter.setMap(null);
 
        //0 is default view of all places, need to remove where clause from sql
-       var options = (newValue == 0 ?
+       var options = (newValue ===0 ?
               { select: 'Location',
                 from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
               }
@@ -258,6 +258,6 @@ var viewModel = function(){
        google.maps.event.trigger(viewModel._markers, 'click', mouseEvent);
    };
 
-}//End ViewModel()
+};//End ViewModel()
 
 ko.applyBindings(new viewModel());
