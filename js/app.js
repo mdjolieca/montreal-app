@@ -140,7 +140,7 @@ ko.bindingHandlers.montrealMap = {
          infoWindow.setOptions({content : html.join(""),position : e.latLng});
          infoWindow.open(map); 
          //call wiki links for article and bind to info window popup
-         getWikiInfo(name);
+         getWikiInfo(name.value);
 
 
      });//end click listener for markers and places list
