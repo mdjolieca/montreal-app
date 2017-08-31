@@ -12,33 +12,32 @@
    
    <!--container filter box -->
     <div class="options-box">
-     
+     <h1>Montreal Pins</h1>
      <div class="placesDiv">
-      <h1>Montreal Pins</h1>
        <select data-bind="value: selectedFilter,options: filtersList,
         optionsText: 'name', optionsValue: 'number', optionsCaption: '-- Filters--'"> 
        </select>
-
+       <p></p>
        <!-- links to layer markers will display here -->
-       <ul id="placesList" data-bind="foreach: placesList">
-         <button class="placesButton" data-bind="text: name, click: $parent.placeClick"></button>
-         </br>
-       </ul>
-      </div>
+       <!-- ko foreach: placesList -->
+       <button class="placesButton" data-bind="text: name, click: $parent.placeClick"></button>
+       <!-- /ko -->
+     </div>
 
-      <div class="attDiv">
+     <div class="attDiv">
         <span> 
          Places list sourced from -
          <a href="https://fusiontables.google.com/data?docid=16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K#rows:id=7" target="_blank" title="DataSoure Montreal-Pins">Montreal-Pins</a> 
          </span>
-         <span> </br>
+         <p></p>
+         <span> 
          Filter list sourced from -
          <a href="https://fusiontables.google.com/data?docid=15yq7vGN2XBufTkrg9Z4XxrG0KOdMINW9hT8B28MU#rows:id=1" target="_blank" title="DataSoure Pins-Filter">Pins-Filter</a> 
          </span>
-       </div>
-
      </div>
-     <!--Map Div-->
+
+    </div>
+    <!--Map Div-->
     <div class="map" data-bind="montrealMap" ></div>
 
   </div>

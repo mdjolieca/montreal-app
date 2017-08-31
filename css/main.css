@@ -1,15 +1,55 @@
 
+@media screen and (max-width: 400px) {
+   body {
+     width: 400px;
+     overflow: scroll;
+   }
+}
 
-html, body {
+@media screen and (max-width: 700px) {
+.options-box {
+        max-width: 100px;
+      }
+
+.map{
+   left: 110px;
+  }
+
+h1{
+   font-size:18px;
+}
+
+}
+
+@media screen  and (min-width: 701px) and (max-width: 900px) {
+.options-box {
+        max-width: 150px;
+      }
+
+.map{
+   left: 160px;
+  }
+
+}
+@media screen and (min-width: 901px) {
+.options-box {
+        max-width: 290px;
+      }
+.map{
+   left: 300px;
+  }
+}
+
+body {
    height: 100%;
    margin: 0;
    padding: 0;
+   background: whitesmoke;
 }
 
 
 .container {
    height: 100%;
-   position: relative;
    background: whitesmoke;
 }
 
@@ -17,23 +57,26 @@ html, body {
 .map{
    bottom:0px;
    height: 100%;
-   left: 362px;
    position: absolute;
    right: 0px;
 }
 
 .options-box {
-
+        position: absolute;
         margin: 0;
-        background: whitesmoke;
         height: 100%;
-        line-height: 35px;
         padding: 1%;
         text-align: left;
-        max-width: 20%;
+        
       }
 
 .placesButton {
+     display: flex;
+     clear: both;
+     clear: both;
+     margin:1%;
+     padding:2px;
+     text-align: left;
        
       }
 
