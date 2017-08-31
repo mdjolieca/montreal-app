@@ -39,15 +39,14 @@
     </div>
     <!--Map Div-->
     <div class="map" data-bind="montrealMap" ></div>
-
+    <div id="error"></div>
   </div>
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI&callback=initMap"
-    async defer>
-  </script>
   <script src="js/lib/knockout-3.4.2.js"></script>
   <script src="js/lib/jquery-3.2.1.min.js"></script>
   <script src="js/app.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBL6mtgfjEKbXS33H5ArRvu49vlgzt-prI&callback=initMap"  onerror="googleError()"
+    async defer>
+  </script>
 
 </body>
 </html>

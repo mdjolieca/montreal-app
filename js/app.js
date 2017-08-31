@@ -50,6 +50,7 @@ var getWikiInfo = function(data) {
           error: function (errorMessage) {
              // no action needed, error here will
              // not distrub user experience
+             alert("wiki data not available");
              console.log("Wiki data not available");
           }
    });
@@ -287,3 +288,8 @@ function initMap() {
    ko.applyBindings(new viewModel());
 }
 
+// Alert the user if google maps isn't working
+function googleError() {
+    "use strict";
+    document.getElementById('error').innerHTML = "<h2>Google Maps is not loading. Please try refreshing the page later.</h2>";
+}
