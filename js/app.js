@@ -36,7 +36,6 @@ var getWikiInfo = function(data) {
           type: "GET",
           url: wUrl,
           contentType: "application/json; charset=utf-8",
-          async: false,
           dataType: "json",
           success: function (response) {
              var articles = response[1];
@@ -51,7 +50,7 @@ var getWikiInfo = function(data) {
           error: function (errorMessage) {
              // no action needed, error here will
              // not distrub user experience
-
+             console.log("Wiki data not available");
           }
    });
 
@@ -60,16 +59,7 @@ var getWikiInfo = function(data) {
 //Binding handler for map init.
 ko.bindingHandlers.montrealMap = {
    init: function (element) {
-    
-    //create a highlighter to animate markers on click
-     var highlighter  = new google.maps.Circle({
-           strokeColor: 'black',
-           strokeOpacity: 2,
-           strokeWeight: 2,
-           fillColor: 'yellow',
-           fillOpacity: 0.35,
-           radius: 1000
-     });
+
     
      //create the map
      var  map = new google.maps.Map(element, {
@@ -77,6 +67,17 @@ ko.bindingHandlers.montrealMap = {
            center: {lat: 45.503949, lng: -73.587577 },
            zoom: 12,
            clickableIcons: false
+     });
+
+
+     //create a highlighter to animate markers on click
+     var highlighter  = new google.maps.Circle({
+           strokeColor: 'black',
+           strokeOpacity: 2,
+           strokeWeight: 2,
+           fillColor: 'yellow',
+           fillOpacity: 0.35,
+           radius: 1000
      });
 
      //create map markers from google fusion tablea
@@ -159,8 +160,8 @@ ko.bindingHandlers.montrealMap = {
       viewModel._montrealMap = map;
       viewModel._highlighter = highlighter;
 
-    }
-
+    
+  }
 
  };
 
@@ -235,14 +236,14 @@ var viewModel = function(){
 
    //filter list drop down menu subscriber method
    this.selectedFilter.subscribe(function(newValue) {
-       if(newValue === undefined){newValue = 0;}//use default
+       if(newValue === undefined){newValue = '0';}//use default
        self.updatePlacesList(newValue);
        //remove any open marker info windows
        viewModel._infoWindow.close();
        viewModel._highlighter.setMap(null);
 
        //0 is default view of all places, need to remove where clause from sql
-       var options = (newValue ===0 ?
+       var options = (newValue === '0' ?
               { select: 'Location',
                 from: '16nlDIFuuJaTNDVwyunp3FCwpNKiRg9eiGcXUBX6K',
               }
@@ -282,4 +283,7 @@ var viewModel = function(){
 
 };//End ViewModel()
 
-ko.applyBindings(new viewModel());
+function initMap() {
+   ko.applyBindings(new viewModel());
+}
+
