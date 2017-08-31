@@ -47,7 +47,9 @@ body {
    background: whitesmoke;
 }
 
-
+.selector{
+ max-width:100%;
+}
 .container {
    height: 100%;
    background: whitesmoke;
@@ -81,10 +83,11 @@ body {
       }
 
 .placesDiv {
-     height: 80%;
+     max-height: 70%;
       }
 
 .attDiv {
-      height: 10%;
+      max-width: 100%;
+      max-height: 10%;
       font-size: 12px;  
       }
